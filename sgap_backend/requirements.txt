@@ -8,3 +8,7 @@ cryptography
 python-dotenv
 python-multipart
 httpx
+scikit-learn
+numpy
+pandas
+joblib
