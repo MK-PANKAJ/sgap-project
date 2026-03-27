@@ -1,2 +1,10 @@
-﻿fastapi
-uvicorn
+fastapi
+uvicorn[standard]
+sqlalchemy
+pydantic-settings
+python-jose[cryptography]
+passlib[bcrypt]
+cryptography
+python-dotenv
+python-multipart
+httpx
