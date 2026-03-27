@@ -12,6 +12,10 @@ class Settings(BaseSettings):
     APP_NAME: str = "SGAP Backend"
     APP_VERSION: str = "1.0.0"
     DEBUG: bool = True
+    DEMO_MODE: bool = True
+
+    # Certificate verification
+    CERTIFICATE_BASE_URL: str = "https://sgap.in/verify"
 
     # Database
     DATABASE_URL: str = "sqlite:///./sgap_dev.db"
