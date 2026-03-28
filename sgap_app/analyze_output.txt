@@ -1,0 +1,24 @@
+﻿Analyzing worker_dashboard.dart...                              
+
+   info - Unnecessary braces in a string interpolation - lib\screens\dashboard\worker_dashboard.dart:932:32 - unnecessary_brace_in_string_interps
+
+flutter : 1 issue 
+found. (ran in 1.3s)
+At line:1 char:1
++ flutter analyze lib/sc
+reens/dashboard/worker_d
+ashboard.dart 2>&1 | Ou 
+...
++ ~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
+    + CategoryInfo      
+        : NotSpecified: 
+(1 i    ssue found. 
+(ran in 1.    
+3s):String) [], Remote  
+  Exception
+    + 
+FullyQualifiedErrorI    
+d : NativeCommandError
+ 

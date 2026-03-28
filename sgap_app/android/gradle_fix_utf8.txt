@@ -1,0 +1,63 @@
+﻿> Task :gradle:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :gradle:compileKotlin UP-TO-DATE
+> Task :gradle:compileJava NO-SOURCE
+> Task :gradle:compileGroovy NO-SOURCE
+> Task :gradle:pluginDescriptors UP-TO-DATE
+> Task :gradle:processResources UP-TO-DATE
+> Task :gradle:classes UP-TO-DATE
+> Task :gradle:jar UP-TO-DATE
+./gradlew : 
+At line:1 char:13
++ cd android; ./gradlew 
+clean build 
+--console=plain > 
+gradle_fix.txt 2> ...
++             ~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
+    + CategoryInfo         
+     : NotSpecified    : 
+(:String) [], Rem    
+oteException
+    + FullyQualifiedErr    
+orId : NativeComman    
+dError
+ 
+FAILURE: Build failed with 
+an exception.
+
+* Where:
+Build file 'C:\Users\HP\One
+Drive\Desktop\S-GAP\sgap-pr
+oject\sgap_app\android\buil
+d.gradle.kts' line: 19
+
+* What went wrong:
+A problem occurred 
+configuring project ':app'.
+> SDK location not found. 
+Define a valid SDK 
+location with an 
+ANDROID_HOME environment 
+variable or by setting the 
+sdk.dir path in your 
+project's local properties 
+file at 'C:\Users\HP\OneDri
+ve\Desktop\S-GAP\sgap-proje
+ct\sgap_app\android\local.p
+roperties'.
+
+* Try:
+> Run with --stacktrace 
+option to get the stack 
+trace.
+> Run with --info or 
+--debug option to get more 
+log output.
+> Run with --scan to get 
+full insights.
+> Get more help at 
+https://help.gradle.org.
+
+BUILD FAILED in 25s
+4 actionable tasks: 4 up-to-date
