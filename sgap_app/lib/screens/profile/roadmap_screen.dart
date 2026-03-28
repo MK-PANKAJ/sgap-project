@@ -1,180 +1,122 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_colors.dart';
 import '../../widgets/sgap_app_bar.dart';
 
-/// Financial roadmap showing the worker's journey and milestones.
 class RoadmapScreen extends StatelessWidget {
   const RoadmapScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final hindi = GoogleFonts.notoSansDevanagari();
+    final phases = [
+      _Phase(
+        number: 1, title: 'फ़ाउंडेशन', status: 'Live ✅',
+        isLive: true,
+        features: ['आवाज़ से आय लॉगिंग', 'ट्रस्ट स्कोर डैशबोर्ड', 'नियोक्ता सत्यापन', 'बुनियादी लोन आवेदन', 'सरकारी योजना जानकारी', 'बीमा जानकारी'],
+      ),
+      _Phase(
+        number: 2, title: 'विस्तार', status: 'जल्द आ रहा है 🚧',
+        isLive: false,
+        features: ['OCEN लोन इंटीग्रेशन', 'UPI पेमेंट वेरिफ़िकेशन', 'बीमा खरीद', 'बहुभाषी सपोर्ट (8 भाषाएं)', 'WhatsApp बॉट'],
+      ),
+      _Phase(
+        number: 3, title: 'एआई', status: 'योजना में 📋',
+        isLive: false,
+        features: ['AI आय भविष्यवाणी', 'ऑटो बचत सुझाव', 'स्मार्ट स्कीम मैचिंग', 'क्रेडिट स्कोर सिमुलेटर'],
+      ),
+      _Phase(
+        number: 4, title: 'स्केल', status: 'भविष्य 🔮',
+        isLive: false,
+        features: ['ब्लॉकचेन आय प्रमाण', 'क्रॉस-प्लेटफ़ॉर्म पोर्टेबिलिटी', 'सामुदायिक सहकारी वित्त', 'API मार्केटप्लेस'],
+      ),
+    ];
+
     return Scaffold(
       backgroundColor: AppColors.darkBackground,
-      appBar: const SgapAppBar(title: 'My Roadmap'),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          Text('Your financial journey',
-              style: theme.textTheme.bodyMedium
-                  ?.copyWith(color: AppColors.darkTextSecondary)),
-          const SizedBox(height: 24),
-          _RoadmapStep(
-            title: 'Create Account',
-            subtitle: 'Signed up on 15 Jan 2024',
-            completed: true,
-            isFirst: true,
-          ),
-          _RoadmapStep(
-            title: 'Verify Identity',
-            subtitle: 'Aadhaar verified',
-            completed: true,
-          ),
-          _RoadmapStep(
-            title: 'Log 30 days of income',
-            subtitle: '22/30 days completed',
-            completed: false,
-            inProgress: true,
-          ),
-          _RoadmapStep(
-            title: 'Reach Trust Score 75+',
-            subtitle: 'Current: 72',
-            completed: false,
-          ),
-          _RoadmapStep(
-            title: 'Get first loan',
-            subtitle: 'Unlock after Trust Score 60+',
-            completed: false,
-          ),
-          _RoadmapStep(
-            title: 'Complete first repayment',
-            subtitle: 'Builds repayment history',
-            completed: false,
-          ),
-          _RoadmapStep(
-            title: 'Premium member',
-            subtitle: 'Access higher loan amounts',
-            completed: false,
-            isLast: true,
-          ),
-        ],
+      appBar: const SgapAppBar(title: 'रोडमैप'),
+      body: ListView.builder(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        itemCount: phases.length,
+        itemBuilder: (ctx, i) {
+          final phase = phases[i];
+          return TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0, end: 1),
+            duration: Duration(milliseconds: 400 + (i * 150)),
+            curve: Curves.easeOut,
+            builder: (c, v, child) => Opacity(opacity: v, child: Transform.translate(offset: Offset(0, 20 * (1 - v)), child: child)),
+            child: _buildPhaseCard(phase, i, phases.length, hindi),
+          );
+        },
       ),
+    );
+  }
+
+  Widget _buildPhaseCard(_Phase phase, int index, int total, TextStyle Function({Color? color, double? fontSize, FontWeight? fontWeight}) hindi) {
+    final color = phase.isLive ? AppColors.success : AppColors.darkTextTertiary;
+    final isLast = index == total - 1;
+
+    return IntrinsicHeight(
+      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        // Timeline connector
+        SizedBox(width: 40, child: Column(children: [
+          Container(width: 32, height: 32,
+            decoration: BoxDecoration(shape: BoxShape.circle,
+              color: phase.isLive ? AppColors.success.withValues(alpha: 0.15) : AppColors.darkCard,
+              border: Border.all(color: color, width: 2)),
+            child: Center(child: phase.isLive
+                ? const Icon(Icons.check_rounded, size: 16, color: AppColors.success)
+                : Text('${phase.number}', style: TextStyle(color: color, fontWeight: FontWeight.w700, fontSize: 14)))),
+          if (!isLast)
+            Expanded(child: Container(width: 2, color: AppColors.darkBorder.withValues(alpha: 0.5))),
+        ])),
+        const SizedBox(width: 12),
+        // Card
+        Expanded(child: Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: AppColors.darkCard,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: phase.isLive ? AppColors.success.withValues(alpha: 0.3) : AppColors.darkBorder, width: phase.isLive ? 1.5 : 0.5),
+            boxShadow: phase.isLive ? [BoxShadow(color: AppColors.success.withValues(alpha: 0.06), blurRadius: 16)] : null,
+          ),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Text('Phase ${phase.number}: ${phase.title}', style: GoogleFonts.notoSansDevanagari(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 16)),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(color: (phase.isLive ? AppColors.success : AppColors.primary).withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
+                child: Text(phase.status, style: GoogleFonts.notoSansDevanagari(color: phase.isLive ? AppColors.success : AppColors.primary, fontWeight: FontWeight.w600, fontSize: 11)),
+              ),
+            ]),
+            const SizedBox(height: 12),
+            ...phase.features.map((f) => Padding(
+              padding: const EdgeInsets.only(bottom: 6),
+              child: Row(children: [
+                Icon(phase.isLive ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
+                    size: 16, color: phase.isLive ? AppColors.success : AppColors.darkTextTertiary),
+                const SizedBox(width: 8),
+                Expanded(child: Text(f, style: GoogleFonts.notoSansDevanagari(
+                    color: phase.isLive ? Colors.white : AppColors.darkTextSecondary, fontSize: 13))),
+                if (!phase.isLive)
+                  Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(6)),
+                    child: Text('जल्द', style: GoogleFonts.notoSansDevanagari(color: AppColors.primary, fontSize: 10, fontWeight: FontWeight.w600))),
+              ]),
+            )),
+          ]),
+        )),
+      ]),
     );
   }
 }
 
-class _RoadmapStep extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final bool completed;
-  final bool inProgress;
-  final bool isFirst;
-  final bool isLast;
-
-  const _RoadmapStep({
-    required this.title,
-    required this.subtitle,
-    required this.completed,
-    this.inProgress = false,
-    this.isFirst = false,
-    this.isLast = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Timeline line + dot
-          SizedBox(
-            width: 40,
-            child: Column(
-              children: [
-                if (!isFirst)
-                  Expanded(
-                    child: Container(
-                      width: 2,
-                      color: completed ? AppColors.success : AppColors.darkBorder,
-                    ),
-                  ),
-                Container(
-                  width: 20,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: completed
-                        ? AppColors.success
-                        : inProgress
-                            ? AppColors.primary
-                            : AppColors.darkBorder,
-                    border: Border.all(
-                      color: completed
-                          ? AppColors.success
-                          : inProgress
-                              ? AppColors.primary
-                              : AppColors.darkBorder,
-                      width: 2,
-                    ),
-                  ),
-                  child: completed
-                      ? const Icon(Icons.check, size: 12, color: Colors.white)
-                      : null,
-                ),
-                if (!isLast)
-                  Expanded(
-                    child: Container(
-                      width: 2,
-                      color: completed ? AppColors.success : AppColors.darkBorder,
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 12),
-          // Content
-          Expanded(
-            child: Container(
-              margin: const EdgeInsets.only(bottom: 16),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: inProgress
-                    ? AppColors.primary.withOpacity(0.1)
-                    : AppColors.darkCard,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: inProgress
-                      ? AppColors.primary.withOpacity(0.3)
-                      : AppColors.darkBorder,
-                  width: inProgress ? 1.5 : 0.5,
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title,
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: completed
-                            ? AppColors.darkTextTertiary
-                            : Colors.white,
-                        fontWeight: FontWeight.w600,
-                        decoration:
-                            completed ? TextDecoration.lineThrough : null,
-                      )),
-                  const SizedBox(height: 4),
-                  Text(subtitle,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: inProgress
-                            ? AppColors.primary
-                            : AppColors.darkTextTertiary,
-                      )),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+class _Phase {
+  final int number;
+  final String title, status;
+  final bool isLive;
+  final List<String> features;
+  const _Phase({required this.number, required this.title, required this.status, required this.isLive, required this.features});
 }

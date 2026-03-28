@@ -1,172 +1,418 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/network/mock_api_service.dart';
 import '../../widgets/sgap_app_bar.dart';
 import '../../widgets/trust_score_gauge.dart';
+import '../../widgets/trust_score_history.dart';
 
-/// Credit profile screen showing trust score breakdown.
-class CreditProfileScreen extends StatelessWidget {
+/// ─────────────────────────────────────────────────────────────────
+///  CREDIT PROFILE — Full trust score breakdown + history + tips
+/// ─────────────────────────────────────────────────────────────────
+class CreditProfileScreen extends StatefulWidget {
   const CreditProfileScreen({super.key});
+
+  @override
+  State<CreditProfileScreen> createState() => _CreditProfileScreenState();
+}
+
+class _CreditProfileScreenState extends State<CreditProfileScreen>
+    with SingleTickerProviderStateMixin {
+  bool _isLoading = true;
+  Map<String, dynamic> _trustData = {};
+
+  late AnimationController _fadeCtrl;
+  late Animation<double> _fadeIn;
+
+  @override
+  void initState() {
+    super.initState();
+    _fadeCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 700),
+    );
+    _fadeIn = CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOut);
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    final data = await MockApiService.instance.getTrustScore('worker-001');
+    if (!mounted) return;
+    setState(() {
+      _trustData = data;
+      _isLoading = false;
+    });
+    _fadeCtrl.forward();
+  }
+
+  @override
+  void dispose() {
+    _fadeCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: AppColors.darkBackground,
-      appBar: const SgapAppBar(title: 'Credit Profile'),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            // Trust Score Hero
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(28),
-              decoration: BoxDecoration(
-                gradient: AppColors.darkCardGradient,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppColors.darkBorder, width: 0.5),
-              ),
-              child: Column(
-                children: [
-                  const TrustScoreGauge(score: 72, size: 140),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Grade: B+',
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '↑ Improving • Updated 25 Mar',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: AppColors.darkTextTertiary,
-                    ),
-                  ),
-                ],
+      appBar: SgapAppBar(
+        title: 'क्रेडिट प्रोफ़ाइल',
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.share_rounded),
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('स्कोर शेयर करने की सुविधा जल्द आ रही है',
+                      style: GoogleFonts.notoSansDevanagari()),
+                  backgroundColor: AppColors.darkCard,
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(color: AppColors.primary))
+          : FadeTransition(
+              opacity: _fadeIn,
+              child: _buildContent(theme),
+            ),
+    );
+  }
+
+  Widget _buildContent(ThemeData theme) {
+    final hindi = GoogleFonts.notoSansDevanagari();
+    final score = (_trustData['score'] as int?) ?? 720;
+    final band = (_trustData['band_hindi'] as String?) ?? 'अच्छा है ⭐⭐';
+    final maxScore = (_trustData['max_score'] as int?) ?? 900;
+    final factors =
+        (_trustData['factors'] as Map<String, dynamic>?) ?? {};
+    final tips = (_trustData['tips'] as List<dynamic>?) ?? [];
+
+    // Component scores for the 6 bars
+    final componentScores = <MapEntry<String, int>>[
+      MapEntry('कमाई की नियमितता', (factors['income_consistency']?['score'] as int?) ?? 82),
+      MapEntry('पुष्टि दर', (factors['employer_verification']?['score'] as int?) ?? 75),
+      MapEntry('आय स्थिरता', 78),
+      MapEntry('प्लेटफॉर्म समय', 88),
+      MapEntry('मालिकों की संख्या', 65),
+      MapEntry('भुगतान इतिहास', (factors['repayment_history']?['score'] as int?) ?? 90),
+    ];
+
+    // Mock 6-month history
+    final historyScores = [580.0, 620.0, 650.0, 680.0, 700.0, 720.0];
+
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(height: 12),
+
+          // ── Trust Score Gauge ──
+          TrustScoreGauge(score: score, size: 220, strokeWidth: 18),
+          const SizedBox(height: 8),
+
+          // ── Band Name + Progress ──
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            decoration: BoxDecoration(
+              color: AppColors.success.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: AppColors.success.withValues(alpha: 0.15),
               ),
             ),
-            const SizedBox(height: 24),
-            Text(
-              'Score Breakdown',
-              style: theme.textTheme.titleMedium?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
+            child: Text(
+              band,
+              style: hindi.copyWith(
+                color: AppColors.success,
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
               ),
             ),
-            const SizedBox(height: 12),
-            _ScoreFactor(label: 'Identity Verification', score: 90),
-            _ScoreFactor(label: 'Employer Verification', score: 85),
-            _ScoreFactor(label: 'Income Consistency', score: 78),
-            _ScoreFactor(label: 'Repayment History', score: 60),
-            _ScoreFactor(label: 'Community Trust', score: 45),
-            const SizedBox(height: 24),
-            // Tips to improve
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: AppColors.info.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.info.withOpacity(0.3)),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                '"बहुत अच्छा" तक ',
+                style: hindi.copyWith(
+                  color: AppColors.darkTextSecondary,
+                  fontSize: 13,
+                ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.lightbulb_outline_rounded,
-                          color: AppColors.info, size: 20),
-                      const SizedBox(width: 8),
-                      Text(
-                        'How to improve',
-                        style: theme.textTheme.titleSmall?.copyWith(
-                          color: AppColors.info,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
+              Text(
+                '${maxScore - score} अंक',
+                style: hindi.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                ),
+              ),
+              Text(
+                ' बाकी',
+                style: hindi.copyWith(
+                  color: AppColors.darkTextSecondary,
+                  fontSize: 13,
+                ),
+              ),
+            ],
+          ),
+          // Progress bar toward next band
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(6),
+              child: LinearProgressIndicator(
+                value: score / maxScore,
+                minHeight: 6,
+                backgroundColor: AppColors.darkBorder,
+                valueColor:
+                    const AlwaysStoppedAnimation<Color>(AppColors.primary),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          // ── Component Score Bars ──
+          _buildSectionTitle(theme, 'स्कोर कंपोनेंट'),
+          const SizedBox(height: 12),
+          ...componentScores.map(
+            (entry) => Padding(
+              padding: const EdgeInsets.only(bottom: 14),
+              child: _ComponentBar(
+                label: entry.key,
+                score: entry.value,
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          // ── 6-Month History Chart ──
+          _buildSectionTitle(theme, '6 महीने का इतिहास'),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: AppColors.darkCard,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.darkBorder, width: 0.5),
+            ),
+            child: TrustScoreHistory(monthlyScores: historyScores),
+          ),
+
+          const SizedBox(height: 24),
+
+          // ── Improvement Tips ──
+          _buildSectionTitle(theme, 'स्कोर बढ़ाने के टिप्स 💡'),
+          const SizedBox(height: 12),
+          ...tips.asMap().entries.map((entry) {
+            return _TipCard(tip: entry.value.toString(), index: entry.key);
+          }),
+
+          const SizedBox(height: 20),
+
+          // ── Share Button ──
+          SizedBox(
+            width: double.infinity,
+            height: 56,
+            child: OutlinedButton.icon(
+              onPressed: () {
+                HapticFeedback.lightImpact();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('शेयर फ़ीचर जल्द आ रहा है',
+                        style: GoogleFonts.notoSansDevanagari()),
+                    backgroundColor: AppColors.darkCard,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
                   ),
-                  const SizedBox(height: 12),
-                  _TipItem('Log income consistently every day'),
-                  _TipItem('Ask your employer to verify your work'),
-                  _TipItem('Pay loan EMIs on time'),
-                  _TipItem('Get community references'),
-                ],
+                );
+              },
+              icon: const Icon(Icons.share_rounded),
+              label: Text(
+                'स्कोर शेयर करो',
+                style: hindi.copyWith(fontWeight: FontWeight.w600),
+              ),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppColors.primary,
+                side: const BorderSide(color: AppColors.primary, width: 1.5),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
               ),
             ),
-          ],
+          ),
+
+          const SizedBox(height: 40),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(ThemeData theme, String text) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        text,
+        style: GoogleFonts.notoSansDevanagari(
+          color: Colors.white,
+          fontWeight: FontWeight.w700,
+          fontSize: 18,
         ),
       ),
     );
   }
 }
 
-class _ScoreFactor extends StatelessWidget {
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  Component Score Bar (0-100)
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+class _ComponentBar extends StatelessWidget {
   final String label;
   final int score;
 
-  const _ScoreFactor({required this.label, required this.score});
+  const _ComponentBar({required this.label, required this.score});
+
+  Color _barColor(int s) {
+    if (s < 40) return AppColors.error;
+    if (s < 60) return AppColors.warning;
+    if (s < 80) return AppColors.success;
+    return AppColors.trustExcellent;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(label,
-                  style: theme.textTheme.bodyMedium
-                      ?.copyWith(color: AppColors.darkTextSecondary)),
-              Text('$score/100',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: AppColors.trustScoreColor(score),
-                    fontWeight: FontWeight.w600,
-                  )),
-            ],
-          ),
-          const SizedBox(height: 6),
-          ClipRRect(
+    final hindi = GoogleFonts.notoSansDevanagari();
+    final color = _barColor(score);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              label,
+              style: hindi.copyWith(
+                color: AppColors.darkTextSecondary,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            Text(
+              '$score/100',
+              style: hindi.copyWith(
+                color: color,
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0, end: score / 100),
+          duration: const Duration(milliseconds: 1200),
+          curve: Curves.easeOutCubic,
+          builder: (ctx, val, _) => ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
-              value: score / 100,
-              backgroundColor: AppColors.darkBorder,
-              valueColor: AlwaysStoppedAnimation(AppColors.trustScoreColor(score)),
+              value: val,
               minHeight: 8,
+              backgroundColor: AppColors.darkBorder,
+              valueColor: AlwaysStoppedAnimation<Color>(color),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
 
-class _TipItem extends StatelessWidget {
-  final String text;
-  const _TipItem(this.text);
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  Tip Card with orange border
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+class _TipCard extends StatelessWidget {
+  final String tip;
+  final int index;
+
+  const _TipCard({required this.tip, required this.index});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text('• ', style: TextStyle(color: AppColors.info)),
-          Expanded(
-            child: Text(
-              text,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.darkTextSecondary,
-                  ),
-            ),
+    final hindi = GoogleFonts.notoSansDevanagari();
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: Duration(milliseconds: 500 + (index * 150)),
+      curve: Curves.easeOut,
+      builder: (ctx, val, child) => Opacity(
+        opacity: val,
+        child: Transform.translate(
+          offset: Offset(0, 12 * (1 - val)),
+          child: child,
+        ),
+      ),
+      child: Container(
+        width: double.infinity,
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.primary.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: AppColors.primary.withValues(alpha: 0.4),
+            width: 1.5,
           ),
-        ],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Center(
+                child: Text(
+                  '${index + 1}',
+                  style: const TextStyle(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                tip,
+                style: hindi.copyWith(
+                  color: Colors.white,
+                  fontSize: 14,
+                  height: 1.5,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
