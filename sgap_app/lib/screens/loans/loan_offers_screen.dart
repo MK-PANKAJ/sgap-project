@@ -49,17 +49,17 @@ class _LoanOffersScreenState extends State<LoanOffersScreen> with SingleTickerPr
     );
   }
 
-  Widget _buildLoadingState(TextStyle Function({Color? color, double? fontSize, FontWeight? fontWeight}) hindi) {
+  Widget _buildLoadingState(TextStyle hindi) {
     return Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
       const SizedBox(width: 48, height: 48, child: CircularProgressIndicator(color: AppColors.primary, strokeWidth: 3)),
       const SizedBox(height: 20),
-      Text('OCEN से ऑफर ला रहे हैं...', style: GoogleFonts.notoSansDevanagari(color: AppColors.darkTextSecondary, fontSize: 15)),
+      Text('OCEN से ऑफर ला रहे हैं...', style: hindi.copyWith(color: AppColors.darkTextSecondary, fontSize: 15)),
       const SizedBox(height: 8),
-      Text('कृपया प्रतीक्षा करें', style: GoogleFonts.notoSansDevanagari(color: AppColors.darkTextTertiary, fontSize: 13)),
+      Text('कृपया प्रतीक्षा करें', style: hindi.copyWith(color: AppColors.darkTextTertiary, fontSize: 13)),
     ]));
   }
 
-  Widget _buildContent(TextStyle Function({Color? color, double? fontSize, FontWeight? fontWeight}) hindi) {
+  Widget _buildContent(TextStyle hindi) {
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -79,8 +79,8 @@ class _LoanOffersScreenState extends State<LoanOffersScreen> with SingleTickerPr
               child: const Icon(Icons.local_offer_rounded, color: AppColors.primary, size: 24)),
             const SizedBox(width: 14),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('आपके लिए ${_offers.length} ऑफर हैं!', style: GoogleFonts.notoSansDevanagari(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 18)),
-              Text('सबसे अच्छा चुनो', style: GoogleFonts.notoSansDevanagari(color: AppColors.darkTextSecondary, fontSize: 13)),
+              Text('आपके लिए ${_offers.length} ऑफर हैं!', style: hindi.copyWith(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 18)),
+              Text('सबसे अच्छा चुनो', style: hindi.copyWith(color: AppColors.darkTextSecondary, fontSize: 13)),
             ])),
           ]),
         ),

@@ -53,7 +53,7 @@ class RoadmapScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPhaseCard(_Phase phase, int index, int total, TextStyle Function({Color? color, double? fontSize, FontWeight? fontWeight}) hindi) {
+  Widget _buildPhaseCard(_Phase phase, int index, int total, TextStyle hindi) {
     final color = phase.isLive ? AppColors.success : AppColors.darkTextTertiary;
     final isLast = index == total - 1;
 

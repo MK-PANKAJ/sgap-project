@@ -30,7 +30,7 @@ dependencies:
   permission_handler: ^11.2.0
 
   # Audio
-  record: ^5.0.4
+  record: 5.1.0
   audioplayers: ^6.0.0
 
   # Animations
@@ -51,7 +51,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^6.0.0
+  flutter_lints: ^3.0.0
 
 flutter:
   uses-material-design: true
@@ -61,3 +61,7 @@ flutter:
     - assets/images/
     - assets/lottie/
     - assets/icons/
+
+dependency_overrides:
+  record: 5.1.0
+  record_platform_interface: 1.1.0

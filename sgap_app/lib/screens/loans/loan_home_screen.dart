@@ -101,7 +101,7 @@ class _LoanHomeScreenState extends State<LoanHomeScreen>
     );
   }
 
-  Widget _buildEligibilityCard(TextStyle Function({Color? color, double? fontSize, FontWeight? fontWeight}) hindi) {
+  Widget _buildEligibilityCard(TextStyle hindi) {
     final eligible = (_eligibility['is_eligible'] as bool?) ?? false;
     final maxAmt = (_eligibility['max_loan_amount'] as int?) ?? 100000;
     final reason = (_eligibility['reason_hindi'] as String?) ?? '';
@@ -140,7 +140,7 @@ class _LoanHomeScreenState extends State<LoanHomeScreen>
     );
   }
 
-  Widget _buildSliderCard(ThemeData theme, TextStyle Function({Color? color, double? fontSize, FontWeight? fontWeight}) hindi) {
+  Widget _buildSliderCard(ThemeData theme, TextStyle hindi) {
     return Container(
       width: double.infinity, padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(color: AppColors.darkCard, borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.darkBorder, width: 0.5)),
@@ -158,7 +158,7 @@ class _LoanHomeScreenState extends State<LoanHomeScreen>
     );
   }
 
-  Widget _buildPurposeDropdown(TextStyle Function({Color? color, double? fontSize, FontWeight? fontWeight}) hindi) {
+  Widget _buildPurposeDropdown(TextStyle hindi) {
     return Container(
       width: double.infinity, padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(color: AppColors.darkCard, borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.darkBorder, width: 0.5)),
@@ -172,7 +172,7 @@ class _LoanHomeScreenState extends State<LoanHomeScreen>
     );
   }
 
-  Widget _buildApplyButton(TextStyle Function({Color? color, double? fontSize, FontWeight? fontWeight}) hindi) {
+  Widget _buildApplyButton(TextStyle hindi) {
     final eligible = (_eligibility['is_eligible'] as bool?) ?? false;
     return SizedBox(width: double.infinity, height: 60,
       child: ElevatedButton(
@@ -184,7 +184,7 @@ class _LoanHomeScreenState extends State<LoanHomeScreen>
       ));
   }
 
-  Widget _buildActiveLoanPlaceholder(TextStyle Function({Color? color, double? fontSize, FontWeight? fontWeight}) hindi) {
+  Widget _buildActiveLoanPlaceholder(TextStyle hindi) {
     return Container(
       width: double.infinity, padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(color: AppColors.darkCard, borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.darkBorder, width: 0.5)),

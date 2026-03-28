@@ -130,7 +130,7 @@ class _EmployerDashboardState extends State<EmployerDashboard> with SingleTicker
     );
   }
 
-  Widget _buildEmptyState(TextStyle Function({Color? color, double? fontSize, FontWeight? fontWeight}) hindi) {
+  Widget _buildEmptyState(TextStyle hindi) {
     return Container(
       width: double.infinity, padding: const EdgeInsets.all(36),
       decoration: BoxDecoration(color: AppColors.darkCard, borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.darkBorder, width: 0.5)),

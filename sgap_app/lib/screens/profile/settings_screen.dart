@@ -79,17 +79,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _sectionTitle(String t, TextStyle Function({Color? color, double? fontSize, FontWeight? fontWeight}) hindi) {
-    return Text(t, style: GoogleFonts.notoSansDevanagari(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 18));
+  Widget _sectionTitle(String t, TextStyle hindi) {
+    return Text(t, style: hindi.copyWith(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 18));
   }
 
-  Widget _toggle(String title, String sub, bool val, ValueChanged<bool> onChanged, TextStyle Function({Color? color, double? fontSize, FontWeight? fontWeight}) hindi) {
+  Widget _toggle(String title, String sub, bool val, ValueChanged<bool> onChanged, TextStyle hindi) {
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(color: AppColors.darkCard, borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.darkBorder, width: 0.5)),
       child: SwitchListTile(
-        title: Text(title, style: GoogleFonts.notoSansDevanagari(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 15)),
-        subtitle: Text(sub, style: GoogleFonts.notoSansDevanagari(color: AppColors.darkTextTertiary, fontSize: 12)),
+        title: Text(title, style: hindi.copyWith(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 15)),
+        subtitle: Text(sub, style: hindi.copyWith(color: AppColors.darkTextTertiary, fontSize: 12)),
         value: val, onChanged: onChanged,
         activeColor: AppColors.primary,
         inactiveThumbColor: AppColors.darkBorder,
@@ -98,13 +98,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _actionTile(IconData icon, String title, String sub, Color color, VoidCallback onTap, TextStyle Function({Color? color, double? fontSize, FontWeight? fontWeight}) hindi) {
+  Widget _actionTile(IconData icon, String title, String sub, Color color, VoidCallback onTap, TextStyle hindi) {
     return Container(
       decoration: BoxDecoration(color: AppColors.darkCard, borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.darkBorder, width: 0.5)),
       child: ListTile(
         leading: Container(width: 38, height: 38, decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)), child: Icon(icon, color: color, size: 20)),
-        title: Text(title, style: GoogleFonts.notoSansDevanagari(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 15)),
-        subtitle: Text(sub, style: GoogleFonts.notoSansDevanagari(color: AppColors.darkTextTertiary, fontSize: 12)),
+        title: Text(title, style: hindi.copyWith(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 15)),
+        subtitle: Text(sub, style: hindi.copyWith(color: AppColors.darkTextTertiary, fontSize: 12)),
         trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.darkTextTertiary),
         onTap: onTap, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),

@@ -69,7 +69,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     );
   }
 
-  Widget _buildProfileHeader(TextStyle Function({Color? color, double? fontSize, FontWeight? fontWeight}) hindi) {
+  Widget _buildProfileHeader(TextStyle hindi) {
     final name = _profile['name'] as String? ?? 'अज्ञात';
     final city = _profile['city'] as String? ?? '';
     final occupation = _profile['occupation'] as String? ?? '';
@@ -95,7 +95,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     ]);
   }
 
-  Widget _buildStats(TextStyle Function({Color? color, double? fontSize, FontWeight? fontWeight}) hindi) {
+  Widget _buildStats(TextStyle hindi) {
     final totalIncome = _profile['total_income_logged'] as int? ?? 0;
     final memberSince = _profile['member_since'] as String? ?? '';
 
@@ -114,7 +114,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     );
   }
 
-  Widget _buildAadhaarStatus(TextStyle Function({Color? color, double? fontSize, FontWeight? fontWeight}) hindi) {
+  Widget _buildAadhaarStatus(TextStyle hindi) {
     final verified = _profile['aadhaar_verified'] as bool? ?? false;
     return Container(
       width: double.infinity, padding: const EdgeInsets.all(16),
@@ -138,7 +138,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     );
   }
 
-  Widget _buildMenuItems(TextStyle Function({Color? color, double? fontSize, FontWeight? fontWeight}) hindi) {
+  Widget _buildMenuItems(TextStyle hindi) {
     final items = [
       _MenuItem(Icons.settings_rounded, 'सेटिंग्स', '/settings'),
       _MenuItem(Icons.language_rounded, 'भाषा बदलो', '/language'),

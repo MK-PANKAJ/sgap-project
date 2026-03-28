@@ -147,7 +147,7 @@ class _LoanSuccessScreenState extends State<LoanSuccessScreen> with TickerProvid
     );
   }
 
-  Widget _buildSectionTitle(String text, TextStyle Function({Color? color, double? fontSize, FontWeight? fontWeight}) hindi) {
+  Widget _buildSectionTitle(String text, TextStyle hindi) {
     return Align(alignment: Alignment.centerLeft, child: Text(text, style: GoogleFonts.notoSansDevanagari(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 18)));
   }
 
