@@ -25,7 +25,7 @@ from datetime import datetime
 
 # ── Configuration ────────────────────────────────────────────────────
 
-API_BASE = " https://sgap-project.onrender.com"
+API_BASE = " https://sgap-project-pqce.vercel.app/api/v1"
 DEMO_TOKEN = None  # Will be set after login
 
 
