@@ -61,6 +61,10 @@ def send_otp(request: SendOtpRequest, db: Session = Depends(get_db)):
 
     otp = "123456" if settings.DEMO_MODE else str(random.randint(100000, 999999))
     otp_store[phone] = otp
+    
+    # 👇 ADDED: Print the OTP to the terminal for testing 👇
+    print(f"\n🔔 DEV MODE -> OTP for {phone} is: {otp}\n") 
+
     logger.info("OTP generated for %s", phone[:4] + "****")
 
     response = {"message": "OTP sent successfully", "phone": phone}
