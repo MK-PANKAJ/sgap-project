@@ -31,7 +31,9 @@ class _CreditProfileScreenState extends ConsumerState<CreditProfileScreen> with 
   }
 
   Future<void> _loadData() async {
-    final data = await MockApiService.instance.getTrustScore('worker-001');
+    final profile = await SecureStorage.instance.getWorkerProfile();
+    final String workerId = profile?['id']?.toString() ?? profile?['user_id']?.toString() ?? '';
+    final data = await MockApiService.instance.getTrustScore(workerId);
     if (!mounted) return;
     setState(() { _trustData = data; _isLoading = false; });
     _fadeCtrl.forward();

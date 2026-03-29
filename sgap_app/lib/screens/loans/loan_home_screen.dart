@@ -34,9 +34,11 @@ class _LoanHomeScreenState extends ConsumerState<LoanHomeScreen> with SingleTick
   }
 
   Future<void> _loadEligibility() async {
-    final data = await MockApiService.instance.getLoanEligibility('worker-001');
+    final profile = await SecureStorage.instance.getWorkerProfile();
+    final String workerId = profile?['id']?.toString() ?? profile?['user_id']?.toString() ?? '';
+    final results = await MockApiService.instance.getLoanEligibility(workerId);
     if (!mounted) return;
-    setState(() { _eligibility = data; _isLoading = false; });
+    setState(() { _eligibility = results; _isLoading = false; });
     _fadeCtrl.forward();
   }
 
