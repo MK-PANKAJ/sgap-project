@@ -170,7 +170,7 @@ class MockApiService {
         'page': 1,
       };
     }
-    final res = await _api.get('/workers/$workerId/income');
+    final res = await _api.get('/income/worker/$workerId');
     return res.data as Map<String, dynamic>;
   }
 
@@ -203,7 +203,7 @@ class MockApiService {
         'trend': 'improving',
       };
     }
-    final res = await _api.get('/workers/$workerId/trust-score');
+    final res = await _api.get('/trust-score/$workerId');
     return res.data as Map<String, dynamic>;
   }
 
@@ -225,7 +225,7 @@ class MockApiService {
         'documents_required': ['Aadhaar', 'PAN (optional)', 'Bank Statement'],
       };
     }
-    final res = await _api.get('/workers/$workerId/loan-eligibility');
+    final res = await _api.get('/loans/check-eligibility/$workerId');
     return res.data as Map<String, dynamic>;
   }
 
