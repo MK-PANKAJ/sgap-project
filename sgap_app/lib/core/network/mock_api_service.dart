@@ -5,7 +5,7 @@ import 'api_client.dart';
 /// │  Set to `false` when the real backend is ready.             │
 /// └──────────────────────────────────────────────────────────────┘
 // ignore: constant_identifier_names
-const bool USE_MOCK = true;
+const bool USE_MOCK = false;
 
 /// Unified API service that fronts both mock data and the real backend.
 ///
