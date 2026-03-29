@@ -23,6 +23,7 @@ import 'screens/help/help_screen.dart';
 import 'screens/profile/profile_screen.dart';
 import 'screens/profile/settings_screen.dart';
 import 'screens/profile/roadmap_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Global navigator key — used by [ApiInterceptor] to redirect on 401.
 final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
@@ -48,7 +49,7 @@ void main() {
   // Share the navigator key with the interceptor for 401 redirects
   navigatorKey = _navigatorKey;
 
-  runApp(const SgapApp());
+  runApp(const ProviderScope(child: SgapApp()));
 }
 
 class SgapApp extends StatelessWidget {
