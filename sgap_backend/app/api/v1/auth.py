@@ -52,7 +52,6 @@ class RegisterEmployerRequest(BaseModel):
 
 # ── Endpoints ────────────────────────────────────────────────────────
 
-
 @router.post("/send-otp")
 def send_otp(request: SendOtpRequest, db: Session = Depends(get_db)):
     phone = clean_phone(request.phone)
@@ -61,17 +60,13 @@ def send_otp(request: SendOtpRequest, db: Session = Depends(get_db)):
 
     otp = "123456" if settings.DEMO_MODE else str(random.randint(100000, 999999))
     otp_store[phone] = otp
-    
-    # 👇 ADDED: Print the OTP to the terminal for testing 👇
-    print(f"\n🔔 DEV MODE -> OTP for {phone} is: {otp}\n") 
-
+    print(f"🔔 DEV MODE: The OTP for {phone} is {otp}")
     logger.info("OTP generated for %s", phone[:4] + "****")
 
     response = {"message": "OTP sent successfully", "phone": phone}
     if settings.DEMO_MODE:
         response["demo_otp"] = otp
     return response
-
 
 @router.post("/verify-otp")
 def verify_otp(request: VerifyOtpRequest, db: Session = Depends(get_db)):
