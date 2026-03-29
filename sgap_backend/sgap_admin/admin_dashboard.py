@@ -25,7 +25,7 @@ from datetime import datetime
 
 # ── Configuration ────────────────────────────────────────────────────
 
-API_BASE = "https://sgap-project.onrender.com"
+API_BASE = "https://sgap-project.onrender.com/api/v1"
 DEMO_TOKEN = None  # Will be set after login
 
 
