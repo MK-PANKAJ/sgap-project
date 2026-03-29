@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // Riverpod
 import '../../core/theme/app_colors.dart';
+import '../../core/storage/secure_storage.dart'; // REQUIRED FOR FETCHING USER ID
 import '../../core/network/mock_api_service.dart';
 import '../../core/providers/language_provider.dart'; // Language State
 import '../../core/localization/app_translations.dart'; // Dictionary
@@ -34,11 +35,19 @@ class _LoanHomeScreenState extends ConsumerState<LoanHomeScreen> with SingleTick
   }
 
   Future<void> _loadEligibility() async {
+    // 1. Storage se profile fetch kiya
     final profile = await SecureStorage.instance.getWorkerProfile();
+    // 2. Safely extract the real database UUID (worker-001 removed!)
     final String workerId = profile?['id']?.toString() ?? profile?['user_id']?.toString() ?? '';
+    
+    // 3. Call the API with the real workerId
     final results = await MockApiService.instance.getLoanEligibility(workerId);
+    
     if (!mounted) return;
-    setState(() { _eligibility = results; _isLoading = false; });
+    setState(() { 
+      _eligibility = results; 
+      _isLoading = false; 
+    });
     _fadeCtrl.forward();
   }
 
@@ -52,7 +61,10 @@ class _LoanHomeScreenState extends ConsumerState<LoanHomeScreen> with SingleTick
   }
 
   @override
-  void dispose() { _fadeCtrl.dispose(); super.dispose(); }
+  void dispose() { 
+    _fadeCtrl.dispose(); 
+    super.dispose(); 
+  }
 
   IconData _purposeIcon(String pKey) {
     switch (pKey) {
@@ -113,37 +125,81 @@ class _LoanHomeScreenState extends ConsumerState<LoanHomeScreen> with SingleTick
   Widget _buildEligibilityCard(TextStyle hindi, String lang) {
     final eligible = (_eligibility['is_eligible'] as bool?) ?? false;
     final maxAmt = (_eligibility['max_loan_amount'] as int?) ?? 100000;
+    
     return Container(
-      width: double.infinity, padding: const EdgeInsets.all(24),
+      width: double.infinity, 
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
-          colors: eligible ? [AppColors.success.withValues(alpha: 0.08), AppColors.darkCard] : [AppColors.error.withValues(alpha: 0.08), AppColors.darkCard]),
-        border: Border.all(color: eligible ? AppColors.success.withValues(alpha: 0.3) : AppColors.error.withValues(alpha: 0.3)),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft, 
+          end: Alignment.bottomRight,
+          colors: eligible 
+              ? [AppColors.success.withValues(alpha: 0.08), AppColors.darkCard] 
+              : [AppColors.error.withValues(alpha: 0.08), AppColors.darkCard]
+        ),
+        border: Border.all(
+          color: eligible 
+              ? AppColors.success.withValues(alpha: 0.3) 
+              : AppColors.error.withValues(alpha: 0.3)
+        ),
       ),
-      child: Column(children: [
-        Row(children: [
-          Container(width: 56, height: 56,
-            decoration: BoxDecoration(color: eligible ? AppColors.success.withValues(alpha: 0.15) : AppColors.error.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(16)),
-            child: Icon(eligible ? Icons.check_circle_rounded : Icons.cancel_rounded, color: eligible ? AppColors.success : AppColors.error, size: 28)),
-          const SizedBox(width: 16),
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(eligible ? tr(lang, 'eligible_yes') : tr(lang, 'eligible_no'), style: GoogleFonts.notoSansDevanagari(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 18)),
-            const SizedBox(height: 4),
-            Text('${tr(lang, 'trust_score')}: 720', style: GoogleFonts.notoSansDevanagari(color: AppColors.darkTextSecondary, fontSize: 13)),
-          ])),
-        ]),
-        const SizedBox(height: 16),
-        Container(width: double.infinity, padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(color: AppColors.darkBackground.withValues(alpha: 0.5), borderRadius: BorderRadius.circular(10)),
-          child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-            _Stat(tr(lang, 'max_limit'), '₹${(maxAmt ~/ 1000)}K', AppColors.primary),
-            Container(width: 1, height: 30, color: AppColors.darkBorder),
-            _Stat(tr(lang, 'interest_rate_label'), '10-18%', AppColors.info),
-            Container(width: 1, height: 30, color: AppColors.darkBorder),
-            _Stat(tr(lang, 'tenure_label'), tr(lang, 'months_24'), AppColors.secondary),
-          ])),
-      ]),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 56, height: 56,
+                decoration: BoxDecoration(
+                  color: eligible ? AppColors.success.withValues(alpha: 0.15) : AppColors.error.withValues(alpha: 0.15), 
+                  borderRadius: BorderRadius.circular(16)
+                ),
+                child: Icon(
+                  eligible ? Icons.check_circle_rounded : Icons.cancel_rounded, 
+                  color: eligible ? AppColors.success : AppColors.error, 
+                  size: 28
+                )
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start, 
+                  children: [
+                    Text(
+                      eligible ? tr(lang, 'eligible_yes') : tr(lang, 'eligible_no'), 
+                      style: GoogleFonts.notoSansDevanagari(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 18)
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${tr(lang, 'trust_score')}: 720', 
+                      style: GoogleFonts.notoSansDevanagari(color: AppColors.darkTextSecondary, fontSize: 13)
+                    ),
+                  ]
+                )
+              ),
+            ]
+          ),
+          const SizedBox(height: 16),
+          Container(
+            width: double.infinity, 
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppColors.darkBackground.withValues(alpha: 0.5), 
+              borderRadius: BorderRadius.circular(10)
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround, 
+              children: [
+                _Stat(tr(lang, 'max_limit'), '₹${(maxAmt ~/ 1000)}K', AppColors.primary),
+                Container(width: 1, height: 30, color: AppColors.darkBorder),
+                _Stat(tr(lang, 'interest_rate_label'), '10-18%', AppColors.info),
+                Container(width: 1, height: 30, color: AppColors.darkBorder),
+                _Stat(tr(lang, 'tenure_label'), tr(lang, 'months_24'), AppColors.secondary),
+              ]
+            )
+          ),
+        ]
+      ),
     );
   }
 
@@ -154,13 +210,29 @@ class _LoanHomeScreenState extends ConsumerState<LoanHomeScreen> with SingleTick
       child: Column(children: [
         Text('₹${_fmt(_loanAmount.round())}', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w800, fontSize: 36)),
         const SizedBox(height: 16),
-        SliderTheme(data: SliderThemeData(activeTrackColor: AppColors.primary, inactiveTrackColor: AppColors.darkBorder, thumbColor: AppColors.primary, overlayColor: AppColors.primary.withValues(alpha: 0.15), trackHeight: 6, thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12)),
-          child: Slider(value: _loanAmount, min: 5000, max: 200000, divisions: 39, onChanged: (v) { setState(() => _loanAmount = v); HapticFeedback.selectionClick(); })),
-        Padding(padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Text('₹5,000', style: GoogleFonts.notoSansDevanagari(color: AppColors.darkTextTertiary, fontSize: 12)),
-            Text('₹2,00,000', style: GoogleFonts.notoSansDevanagari(color: AppColors.darkTextTertiary, fontSize: 12)),
-          ])),
+        SliderTheme(
+          data: SliderThemeData(activeTrackColor: AppColors.primary, inactiveTrackColor: AppColors.darkBorder, thumbColor: AppColors.primary, overlayColor: AppColors.primary.withValues(alpha: 0.15), trackHeight: 6, thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12)),
+          child: Slider(
+            value: _loanAmount, 
+            min: 5000, 
+            max: 200000, 
+            divisions: 39, 
+            onChanged: (v) { 
+              setState(() => _loanAmount = v); 
+              HapticFeedback.selectionClick(); 
+            }
+          )
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween, 
+            children: [
+              Text('₹5,000', style: GoogleFonts.notoSansDevanagari(color: AppColors.darkTextTertiary, fontSize: 12)),
+              Text('₹2,00,000', style: GoogleFonts.notoSansDevanagari(color: AppColors.darkTextTertiary, fontSize: 12)),
+            ]
+          )
+        ),
       ]),
     );
   }
@@ -169,26 +241,38 @@ class _LoanHomeScreenState extends ConsumerState<LoanHomeScreen> with SingleTick
     return Container(
       width: double.infinity, padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(color: AppColors.darkCard, borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.darkBorder, width: 0.5)),
-      child: DropdownButtonHideUnderline(child: DropdownButton<String>(
-        value: _selectedPurposeKey, dropdownColor: AppColors.darkCard, isExpanded: true,
-        icon: const Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.primary),
-        style: GoogleFonts.notoSansDevanagari(color: Colors.white, fontSize: 16),
-        items: _purposeKeys.map((pKey) => DropdownMenuItem(value: pKey, child: Row(children: [Icon(_purposeIcon(pKey), size: 20, color: AppColors.primary), const SizedBox(width: 12), Text(tr(lang, pKey))]))).toList(),
-        onChanged: (v) { if (v != null) setState(() => _selectedPurposeKey = v); },
-      )),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: _selectedPurposeKey, 
+          dropdownColor: AppColors.darkCard, 
+          isExpanded: true,
+          icon: const Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.primary),
+          style: GoogleFonts.notoSansDevanagari(color: Colors.white, fontSize: 16),
+          items: _purposeKeys.map((pKey) => DropdownMenuItem(
+            value: pKey, 
+            child: Row(children: [Icon(_purposeIcon(pKey), size: 20, color: AppColors.primary), const SizedBox(width: 12), Text(tr(lang, pKey))])
+          )).toList(),
+          onChanged: (v) { 
+            if (v != null) setState(() => _selectedPurposeKey = v); 
+          },
+        )
+      ),
     );
   }
 
   Widget _buildApplyButton(TextStyle hindi, String lang) {
     final eligible = (_eligibility['is_eligible'] as bool?) ?? false;
-    return SizedBox(width: double.infinity, height: 60,
+    return SizedBox(
+      width: double.infinity, 
+      height: 60,
       child: ElevatedButton(
         onPressed: (eligible && !_isApplying) ? _applyForLoan : null,
         style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)), elevation: 0),
         child: _isApplying
             ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white))
             : Text(tr(lang, 'apply_loan'), style: GoogleFonts.notoSansDevanagari(fontWeight: FontWeight.w700, fontSize: 17)),
-      ));
+      )
+    );
   }
 
   Widget _buildActiveLoanPlaceholder(TextStyle hindi, String lang) {
@@ -210,10 +294,13 @@ class _Stat extends StatelessWidget {
   final String label, value;
   final Color color;
   const _Stat(this.label, this.value, this.color);
+  
   @override
-  Widget build(BuildContext context) => Column(children: [
-    Text(value, style: GoogleFonts.notoSansDevanagari(color: color, fontWeight: FontWeight.w700, fontSize: 16)),
-    const SizedBox(height: 2),
-    Text(label, style: GoogleFonts.notoSansDevanagari(color: AppColors.darkTextTertiary, fontSize: 11)),
-  ]);
+  Widget build(BuildContext context) => Column(
+    children: [
+      Text(value, style: GoogleFonts.notoSansDevanagari(color: color, fontWeight: FontWeight.w700, fontSize: 16)),
+      const SizedBox(height: 2),
+      Text(label, style: GoogleFonts.notoSansDevanagari(color: AppColors.darkTextTertiary, fontSize: 11)),
+    ]
+  );
 }

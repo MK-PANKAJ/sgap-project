@@ -1,120 +1,67 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart'; // Riverpod
+import 'package:flutter_riverpod/flutter_riverpod.dart'; // Naya add kiya
 import '../../core/theme/app_colors.dart';
-import '../../core/storage/secure_storage.dart'; // REQUIRED FOR FETCHING USER ID
 import '../../core/network/mock_api_service.dart';
-import '../../core/providers/language_provider.dart'; // Language State
-import '../../core/localization/app_translations.dart'; // Dictionary
+import '../../core/providers/language_provider.dart'; // Naya add kiya
+import '../../core/localization/app_translations.dart'; // Naya add kiya
 import '../../widgets/sgap_app_bar.dart';
+import '../../widgets/status_badge.dart';
 
-class LoanHomeScreen extends ConsumerStatefulWidget {
-  const LoanHomeScreen({super.key});
+// ConsumerStatefulWidget lagaya hai
+class IncomeLedgerScreen extends ConsumerStatefulWidget {
+  const IncomeLedgerScreen({super.key});
   @override
-  ConsumerState<LoanHomeScreen> createState() => _LoanHomeScreenState();
+  ConsumerState<IncomeLedgerScreen> createState() => _IncomeLedgerScreenState();
 }
 
-class _LoanHomeScreenState extends ConsumerState<LoanHomeScreen> with SingleTickerProviderStateMixin {
-  bool _isLoading = true, _isApplying = false;
-  Map<String, dynamic> _eligibility = {};
-  double _loanAmount = 50000;
-  
-  // Ab hum keys use karenge dropdown ke liye, taaki language badalne par problem na ho
-  String _selectedPurposeKey = 'medical';
-  final _purposeKeys = ['medical', 'wedding', 'home', 'business', 'other'];
-  
-  late AnimationController _fadeCtrl;
+class _IncomeLedgerScreenState extends ConsumerState<IncomeLedgerScreen> {
+  bool _isLoading = true;
+  Map<String, dynamic> _summary = {};
+  List<Map<String, dynamic>> _records = [];
 
   @override
   void initState() {
     super.initState();
-    _fadeCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
-    _loadEligibility();
+    _loadData();
   }
 
-  Future<void> _loadEligibility() async {
-    // 1. Storage se profile fetch kiya
-    final profile = await SecureStorage.instance.getWorkerProfile();
-    // 2. Safely extract the real database UUID (worker-001 removed!)
-    final String workerId = profile?['id']?.toString() ?? profile?['user_id']?.toString() ?? '';
-    
-    // 3. Call the API with the real workerId
-    final results = await MockApiService.instance.getLoanEligibility(workerId);
-    
+  Future<void> _loadData() async {
+    final results = await Future.wait([
+      MockApiService.instance.getMonthlyIncome('worker-001'),
+      MockApiService.instance.getIncomeRecords('worker-001')
+    ]);
     if (!mounted) return;
-    setState(() { 
-      _eligibility = results; 
-      _isLoading = false; 
+    setState(() {
+      _summary = results[0];
+      final rData = results[1];
+      _records = (rData['records'] as List<dynamic>?)?.cast<Map<String, dynamic>>() ?? [];
+      _isLoading = false;
     });
-    _fadeCtrl.forward();
-  }
-
-  Future<void> _applyForLoan() async {
-    setState(() => _isApplying = true);
-    HapticFeedback.heavyImpact();
-    await MockApiService.instance.applyLoan({'amount': _loanAmount.round(), 'purpose': _selectedPurposeKey});
-    if (!mounted) return;
-    setState(() => _isApplying = false);
-    Navigator.of(context).pushNamed('/loan-offers');
-  }
-
-  @override
-  void dispose() { 
-    _fadeCtrl.dispose(); 
-    super.dispose(); 
-  }
-
-  IconData _purposeIcon(String pKey) {
-    switch (pKey) {
-      case 'medical': return Icons.local_hospital_rounded;
-      case 'wedding': return Icons.celebration_rounded;
-      case 'home': return Icons.home_rounded;
-      case 'business': return Icons.store_rounded;
-      default: return Icons.more_horiz_rounded;
-    }
-  }
-
-  String _fmt(int n) {
-    if (n >= 100000) return '${n ~/ 100000},${((n % 100000) ~/ 1000).toString().padLeft(2, '0')},000';
-    if (n >= 1000) return '${n ~/ 1000},${(n % 1000).toString().padLeft(3, '0')}';
-    return '$n';
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final hindi = GoogleFonts.notoSansDevanagari();
-    final lang = ref.watch(languageProvider); // Check Language
+    final lang = ref.watch(languageProvider); // Language watch kar raha hai
 
     return Scaffold(
       backgroundColor: AppColors.darkBackground,
-      appBar: SgapAppBar(title: tr(lang, 'get_loan')),
+      appBar: SgapAppBar(title: tr(lang, 'ledger_title'), showBack: true),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
-          : FadeTransition(
-              opacity: CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOut),
+          : RefreshIndicator(
+              color: AppColors.primary, backgroundColor: AppColors.darkCard,
+              onRefresh: () async { setState(() => _isLoading = true); await _loadData(); },
               child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+                padding: const EdgeInsets.all(20),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  const SizedBox(height: 16),
-                  _buildEligibilityCard(hindi, lang),
+                  _buildSummaryCard(hindi, lang),
                   const SizedBox(height: 28),
-                  Text(tr(lang, 'how_much_loan'), style: hindi.copyWith(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 18)),
+                  Text(tr(lang, 'all_transactions'), style: hindi.copyWith(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 18)),
                   const SizedBox(height: 16),
-                  _buildSliderCard(theme, hindi),
-                  const SizedBox(height: 24),
-                  Text(tr(lang, 'why_loan'), style: hindi.copyWith(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 18)),
-                  const SizedBox(height: 12),
-                  _buildPurposeDropdown(hindi, lang),
-                  const SizedBox(height: 32),
-                  _buildApplyButton(hindi, lang),
-                  const SizedBox(height: 32),
-                  Text(tr(lang, 'active_loan'), style: hindi.copyWith(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 18)),
-                  const SizedBox(height: 12),
-                  _buildActiveLoanPlaceholder(hindi, lang),
+                  ..._records.map((r) => Padding(padding: const EdgeInsets.only(bottom: 12), child: _buildRecordCard(r, hindi, lang))),
                   const SizedBox(height: 40),
                 ]),
               ),
@@ -122,185 +69,65 @@ class _LoanHomeScreenState extends ConsumerState<LoanHomeScreen> with SingleTick
     );
   }
 
-  Widget _buildEligibilityCard(TextStyle hindi, String lang) {
-    final eligible = (_eligibility['is_eligible'] as bool?) ?? false;
-    final maxAmt = (_eligibility['max_loan_amount'] as int?) ?? 100000;
-    
-    return Container(
-      width: double.infinity, 
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft, 
-          end: Alignment.bottomRight,
-          colors: eligible 
-              ? [AppColors.success.withValues(alpha: 0.08), AppColors.darkCard] 
-              : [AppColors.error.withValues(alpha: 0.08), AppColors.darkCard]
-        ),
-        border: Border.all(
-          color: eligible 
-              ? AppColors.success.withValues(alpha: 0.3) 
-              : AppColors.error.withValues(alpha: 0.3)
-        ),
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 56, height: 56,
-                decoration: BoxDecoration(
-                  color: eligible ? AppColors.success.withValues(alpha: 0.15) : AppColors.error.withValues(alpha: 0.15), 
-                  borderRadius: BorderRadius.circular(16)
-                ),
-                child: Icon(
-                  eligible ? Icons.check_circle_rounded : Icons.cancel_rounded, 
-                  color: eligible ? AppColors.success : AppColors.error, 
-                  size: 28
-                )
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start, 
-                  children: [
-                    Text(
-                      eligible ? tr(lang, 'eligible_yes') : tr(lang, 'eligible_no'), 
-                      style: GoogleFonts.notoSansDevanagari(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 18)
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${tr(lang, 'trust_score')}: 720', 
-                      style: GoogleFonts.notoSansDevanagari(color: AppColors.darkTextSecondary, fontSize: 13)
-                    ),
-                  ]
-                )
-              ),
-            ]
-          ),
-          const SizedBox(height: 16),
-          Container(
-            width: double.infinity, 
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: AppColors.darkBackground.withValues(alpha: 0.5), 
-              borderRadius: BorderRadius.circular(10)
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround, 
-              children: [
-                _Stat(tr(lang, 'max_limit'), '₹${(maxAmt ~/ 1000)}K', AppColors.primary),
-                Container(width: 1, height: 30, color: AppColors.darkBorder),
-                _Stat(tr(lang, 'interest_rate_label'), '10-18%', AppColors.info),
-                Container(width: 1, height: 30, color: AppColors.darkBorder),
-                _Stat(tr(lang, 'tenure_label'), tr(lang, 'months_24'), AppColors.secondary),
-              ]
-            )
-          ),
-        ]
-      ),
-    );
-  }
+  Widget _buildSummaryCard(TextStyle hindi, String lang) {
+    final total = (_summary['total_earned'] as int?) ?? 0;
+    final verified = (_summary['verified_amount'] as int?) ?? 0;
+    final pending = (_summary['pending_amount'] as int?) ?? 0;
 
-  Widget _buildSliderCard(ThemeData theme, TextStyle hindi) {
     return Container(
-      width: double.infinity, padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(color: AppColors.darkCard, borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.darkBorder, width: 0.5)),
+      width: double.infinity, padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(color: AppColors.darkCard, borderRadius: BorderRadius.circular(20), border: Border.all(color: AppColors.darkBorder, width: 0.5)),
       child: Column(children: [
-        Text('₹${_fmt(_loanAmount.round())}', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w800, fontSize: 36)),
-        const SizedBox(height: 16),
-        SliderTheme(
-          data: SliderThemeData(activeTrackColor: AppColors.primary, inactiveTrackColor: AppColors.darkBorder, thumbColor: AppColors.primary, overlayColor: AppColors.primary.withValues(alpha: 0.15), trackHeight: 6, thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12)),
-          child: Slider(
-            value: _loanAmount, 
-            min: 5000, 
-            max: 200000, 
-            divisions: 39, 
-            onChanged: (v) { 
-              setState(() => _loanAmount = v); 
-              HapticFeedback.selectionClick(); 
-            }
-          )
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween, 
-            children: [
-              Text('₹5,000', style: GoogleFonts.notoSansDevanagari(color: AppColors.darkTextTertiary, fontSize: 12)),
-              Text('₹2,00,000', style: GoogleFonts.notoSansDevanagari(color: AppColors.darkTextTertiary, fontSize: 12)),
-            ]
-          )
-        ),
+        Text(tr(lang, 'this_month_income'), style: hindi.copyWith(color: AppColors.darkTextSecondary, fontSize: 14)),
+        const SizedBox(height: 8),
+        Text('₹$total', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 40)),
+        const SizedBox(height: 24),
+        Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+          _buildSummaryStat(tr(lang, 'verified_label'), '₹$verified', AppColors.success, hindi),
+          Container(width: 1, height: 40, color: AppColors.darkBorder),
+          _buildSummaryStat(tr(lang, 'pending_label'), '₹$pending', AppColors.warning, hindi),
+        ]),
       ]),
     );
   }
 
-  Widget _buildPurposeDropdown(TextStyle hindi, String lang) {
-    return Container(
-      width: double.infinity, padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(color: AppColors.darkCard, borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.darkBorder, width: 0.5)),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: _selectedPurposeKey, 
-          dropdownColor: AppColors.darkCard, 
-          isExpanded: true,
-          icon: const Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.primary),
-          style: GoogleFonts.notoSansDevanagari(color: Colors.white, fontSize: 16),
-          items: _purposeKeys.map((pKey) => DropdownMenuItem(
-            value: pKey, 
-            child: Row(children: [Icon(_purposeIcon(pKey), size: 20, color: AppColors.primary), const SizedBox(width: 12), Text(tr(lang, pKey))])
-          )).toList(),
-          onChanged: (v) { 
-            if (v != null) setState(() => _selectedPurposeKey = v); 
-          },
-        )
-      ),
-    );
+  Widget _buildSummaryStat(String label, String val, Color color, TextStyle hindi) {
+    return Column(children: [
+      Text(val, style: TextStyle(color: color, fontWeight: FontWeight.w700, fontSize: 18)),
+      const SizedBox(height: 4),
+      Text(label, style: hindi.copyWith(color: AppColors.darkTextTertiary, fontSize: 12)),
+    ]);
   }
 
-  Widget _buildApplyButton(TextStyle hindi, String lang) {
-    final eligible = (_eligibility['is_eligible'] as bool?) ?? false;
-    return SizedBox(
-      width: double.infinity, 
-      height: 60,
-      child: ElevatedButton(
-        onPressed: (eligible && !_isApplying) ? _applyForLoan : null,
-        style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)), elevation: 0),
-        child: _isApplying
-            ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white))
-            : Text(tr(lang, 'apply_loan'), style: GoogleFonts.notoSansDevanagari(fontWeight: FontWeight.w700, fontSize: 17)),
-      )
-    );
-  }
+  Widget _buildRecordCard(Map<String, dynamic> record, TextStyle hindi, String lang) {
+    final amount = record['amount'] ?? 0;
+    final employer = record['employer_name'] ?? '-';
+    final workType = record['work_type'] ?? '';
+    final date = record['date'] ?? '';
+    final statusStr = record['status'] as String?;
 
-  Widget _buildActiveLoanPlaceholder(TextStyle hindi, String lang) {
+    StatusBadgeState statusState;
+    if (statusStr == 'verified') statusState = StatusBadgeState.confirmed;
+    else if (statusStr == 'rejected') statusState = StatusBadgeState.disputed;
+    else statusState = StatusBadgeState.pending;
+
     return Container(
-      width: double.infinity, padding: const EdgeInsets.all(28),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(color: AppColors.darkCard, borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.darkBorder, width: 0.5)),
-      child: Column(children: [
-        const Icon(Icons.account_balance_wallet_outlined, size: 40, color: AppColors.darkTextTertiary),
-        const SizedBox(height: 12),
-        Text(tr(lang, 'no_active_loan'), style: GoogleFonts.notoSansDevanagari(color: AppColors.darkTextSecondary, fontSize: 15)),
-        const SizedBox(height: 4),
-        Text(tr(lang, 'apply_from_above'), style: GoogleFonts.notoSansDevanagari(color: AppColors.darkTextTertiary, fontSize: 13)),
+      child: Row(children: [
+        Container(width: 46, height: 46, decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)), child: const Icon(Icons.currency_rupee_rounded, color: AppColors.primary)),
+        const SizedBox(width: 14),
+        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(employer, style: hindi.copyWith(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 15)),
+          const SizedBox(height: 4),
+          Text('$workType • $date', style: hindi.copyWith(color: AppColors.darkTextTertiary, fontSize: 12)),
+        ])),
+        Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+          Text('₹$amount', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 16)),
+          const SizedBox(height: 6),
+          StatusBadge(state: statusState),
+        ]),
       ]),
     );
   }
-}
-
-class _Stat extends StatelessWidget {
-  final String label, value;
-  final Color color;
-  const _Stat(this.label, this.value, this.color);
-  
-  @override
-  Widget build(BuildContext context) => Column(
-    children: [
-      Text(value, style: GoogleFonts.notoSansDevanagari(color: color, fontWeight: FontWeight.w700, fontSize: 16)),
-      const SizedBox(height: 2),
-      Text(label, style: GoogleFonts.notoSansDevanagari(color: AppColors.darkTextTertiary, fontSize: 11)),
-    ]
-  );
 }
