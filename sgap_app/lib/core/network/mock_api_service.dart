@@ -110,7 +110,7 @@ class MockApiService {
         'comparison_last_month': '+12%',
       };
     }
-    final res = await _api.get('/workers/$workerId/income/monthly');
+    final res = await _api.get('/income/monthly-summary/$workerId');
     return res.data as Map<String, dynamic>;
   }
 
