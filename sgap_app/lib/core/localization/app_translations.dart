@@ -1,58 +1,40 @@
-// lib/core/localization/app_translations.dart
-
 const Map<String, Map<String, String>> appTranslations = {
   'हिंदी': {
-    // --- Dashboard & General ---
     'dashboard': 'डैशबोर्ड', 'loans': 'लोन', 'schemes': 'योजनाएं', 'profile': 'प्रोफ़ाइल',
     'trust_score': 'ट्रस्ट स्कोर', 'income': 'कमाई', 'expense': 'खर्च',
     'apply_loan': 'लोन के लिए अप्लाई करो', 'available_offers': 'उपलब्ध ऑफर्स',
     'recent_transactions': 'हाल ही के लेन-देन', 'logout': 'लॉग आउट',
-    'greeting': 'नमस्ते', 'how_earning': 'आज कमाई कैसी रही?',
-    'no_notif': 'अभी कोई नई सूचना नहीं', 'view_details': 'विस्तार से देखें',
-    'monthly_income': 'इस महीने की कमाई', 'view_all': 'सभी देखो →',
+    'greeting': 'नमस्ते', 'how_earning': 'आज कमाई कैसी रही?', 'no_notif': 'अभी कोई नई सूचना नहीं',
+    'view_details': 'विस्तार से देखें', 'monthly_income': 'इस महीने की कमाई', 'view_all': 'सभी देखो →',
     'verified': 'सत्यापित', 'pending': 'लंबित', 'quick_actions': 'जल्दी करो ⚡',
-    'qa_voice': 'आवाज़ से\nलॉग करो', 'qa_income': 'कमाई\nदेखो',
-    'qa_loan': 'लोन\nलो', 'qa_schemes': 'सरकारी\nयोजनाएं',
-    'recent_entries': 'हाल की एंट्री', 'no_entry': 'अभी कोई एंट्री नहीं',
-    'tap_voice': 'ऊपर "आवाज़ से लॉग करो" दबाओ', 'nav_home': 'होम',
-    'nav_income': 'कमाई', 'nav_score': 'स्कोर', 'nav_loan': 'लोन', 'nav_profile': 'प्रोफाइल',
+    'qa_voice': 'आवाज़ से\nलॉग करो', 'qa_income': 'कमाई\nदेखो', 'qa_loan': 'लोन\nलो', 'qa_schemes': 'सरकारी\nयोजनाएं',
+    'recent_entries': 'हाल की एंट्री', 'no_entry': 'अभी कोई एंट्री नहीं', 'tap_voice': 'ऊपर "आवाज़ से लॉग करो" दबाओ',
+    'nav_home': 'होम', 'nav_income': 'कमाई', 'nav_score': 'स्कोर', 'nav_loan': 'लोन', 'nav_profile': 'प्रोफाइल',
     'band_good': 'अच्छा है ⭐⭐', 'trend_up': 'बढ़ रहा है', 'trend_flat': 'स्थिर',
-    
-    // --- Voice & Income ---
     'voice_title': 'आवाज़ से एंट्री', 'listening': 'सुन रहा हूँ...', 'saving': 'सेव हो रहा है...',
     'tap_mic': 'बोलने के लिए माइक दबाएं', 'entry_saved': 'एंट्री सेव हो गई! ✅',
     'voice_hint_text': 'ऐसे बोलकर देखें:\n"आज दिहाड़ी के 800 रुपये मिले"\n"500 रुपये का पेट्रोल डलवाया"',
     'ledger_title': 'कमाई का खाता', 'this_month_income': 'इस महीने की कमाई',
     'verified_label': 'सत्यापित', 'pending_label': 'लंबित', 'all_transactions': 'सभी लेन-देन',
-
-    // --- Credit Profile & Schemes ---
     'credit_profile_title': 'क्रेडिट प्रोफ़ाइल', 'share_soon': 'स्कोर शेयर करने की सुविधा जल्द आ रही है',
-    'to_excellent': '"बहुत अच्छा" तक', 'points_left': 'अंक बाकी',
-    'score_components': 'स्कोर कंपोनेंट', 'history_6m': '6 महीने का इतिहास',
-    'improvement_tips': 'स्कोर बढ़ाने के टिप्स 💡', 'share_score_btn': 'स्कोर शेयर करो',
+    'to_excellent': '"बहुत अच्छा" तक', 'points_left': 'अंक बाकी', 'score_components': 'स्कोर कंपोनेंट',
+    'history_6m': '6 महीने का इतिहास', 'improvement_tips': 'स्कोर बढ़ाने के टिप्स 💡', 'share_score_btn': 'स्कोर शेयर करो',
     'comp_inc_cons': 'कमाई की नियमितता', 'comp_ver_rate': 'पुष्टि दर', 'comp_inc_stab': 'आय स्थिरता',
     'comp_plat_ten': 'प्लेटफॉर्म समय', 'comp_emp_count': 'मालिकों की संख्या', 'comp_rep_hist': 'भुगतान इतिहास',
     'govt_schemes': 'सरकारी योजनाएं', 'tab_all': 'सभी', 'tab_insurance': 'बीमा', 'tab_pension': 'पेंशन',
     'tab_health': 'स्वास्थ्य', 'tab_identity': 'पहचान', 'tab_housing': 'आवास', 'eligible_check': 'पात्र ✓',
     'applied_check': 'लागू ✓', 'go_to_link': 'पर जाएं', 'already_applied': 'पहले से लागू', 'apply_now': 'अभी अप्लाई करो',
-
-    // --- Loan Screen (YE MISS HO GAYA THA) ---
     'get_loan': 'लोन लो', 'how_much_loan': 'कितना लोन चाहिए?', 'why_loan': 'लोन किसलिए?',
     'medical': 'इलाज', 'wedding': 'शादी', 'home': 'मकान', 'business': 'कारोबार', 'other': 'अन्य',
     'active_loan': 'चालू लोन', 'eligible_yes': 'आप पात्र हैं! ✅', 'eligible_no': 'अभी पात्र नहीं',
     'max_limit': 'अधिकतम', 'interest_rate_label': 'ब्याज दर', 'tenure_label': 'अवधि',
     'months_24': '24 महीने', 'no_active_loan': 'अभी कोई लोन नहीं है', 'apply_from_above': 'ऊपर से अप्लाई करो!',
-
-    // --- Profile Screen (YE BHI MISS HO GAYA THA) ---
     'profile_title': 'प्रोफ़ाइल', 'total_earnings': 'कुल कमाई', 'fixed_income': 'पक्की आय',
     'employers': 'मालिक', 'days': 'दिन', 'aadhaar_status': 'आधार सत्यापन',
     'verified_yes': 'सत्यापित ✓', 'verified_no': 'सत्यापन बाकी है', 'do_it': 'करो →',
     'menu_settings': 'सेटिंग्स', 'menu_lang': 'भाषा बदलो', 'menu_roadmap': 'रोडमैप',
     'menu_help': 'मदद', 'logout_btn': 'लॉगआउट', 'unknown': 'अज्ञात',
-    'Construction Worker': 'निर्माण मज़दूर', // Dynamic backend words
-    'Delhi': 'दिल्ली',
-
-    // --- Auth (Language, Phone, OTP, Registration, Welcome) ---
+    'Construction Worker': 'निर्माण मज़दूर', 'Delhi': 'दिल्ली',
     'choose_lang': 'अपनी भाषा चुनें', 'choose_lang_sub': 'Choose your language', 'coming_soon': 'जल्द आ रहा है',
     'continue_btn': 'आगे बढ़ो', 'enter_phone': 'अपना नंबर डालो', 'will_send_otp': 'हम आपको OTP भेजेंगे',
     'val_phone_req': 'फ़ोन नंबर डालना ज़रूरी है', 'val_phone_10': '10 अंकों का सही नंबर डालें',
@@ -73,20 +55,40 @@ const Map<String, Map<String, String>> appTranslations = {
     'wt_shop': 'दुकान', 'wt_factory': 'फैक्ट्री', 'wt_farming': 'खेती', 'wt_other': 'अन्य',
     'welcome_user': 'स्वागत है', 'profile_created': 'आपकी प्रोफ़ाइल बन गई है',
     'your_trust_score': 'आपका ट्रस्ट स्कोर', 'building_score': '🔨 बन रहा है', 'max_score': 'अधिकतम 900',
-    'score_tips_title': '💡 स्कोर बढ़ाने के तरीक़े', 
-    'tip_1': 'रोज़ अपनी आय बोलकर रिकॉर्ड करें', 'tip_1_pt': '+50 अंक',
-    'tip_2': 'नियोक्ता से सत्यापन करवाएँ', 'tip_2_pt': '+30 अंक',
-    'tip_3': 'e-Shram कार्ड और आधार लिंक करें', 'tip_3_pt': '+20 अंक',
+    'score_tips_title': '💡 स्कोर बढ़ाने के तरीक़े', 'tip_1': 'रोज़ अपनी आय बोलकर रिकॉर्ड करें', 'tip_1_pt': '+50 अंक',
+    'tip_2': 'नियोक्ता से सत्यापन करवाएँ', 'tip_2_pt': '+30 अंक', 'tip_3': 'e-Shram कार्ड और आधार लिंक करें', 'tip_3_pt': '+20 अंक',
     'go_to_dashboard': 'Dashboard देखो',
+    'loan_offers_title': 'लोन ऑफर', 'fetching_ocen': 'OCEN से ऑफर ला रहे हैं...', 'please_wait': 'कृपया प्रतीक्षा करें',
+    'offers_for_you': 'आपके लिए', 'offers_count': 'ऑफर हैं!', 'choose_best': 'सबसे अच्छा चुनो',
+    'best_offer': 'सबसे अच्छा', 'amount': 'राशि', 'interest': 'ब्याज', 'emi': 'EMI', 'duration': 'अवधि',
+    'months': 'महीने', 'approval': 'अप्रूवल', 'choose_this_offer': 'यह ऑफर चुनो',
+    'loan_approved': 'लोन मंज़ूर! 🎉', 'congrats_approved': 'बधाई हो! आपका लोन अप्रूव हो गया है',
+    'lender': 'लेंडर', 'when_money_arrive': 'पैसे कब मिलेंगे?', 'in_4_hours': '4 घंटे में मिलेगा',
+    'emi_schedule': 'EMI शेड्यूल', 'month_apr': 'अप्रैल 2026', 'month_may': 'मई 2026', 'month_jun': 'जून 2026',
+    'download': 'डाउनलोड', 'share': 'शेयर करो', 'download_soon': 'डाउनलोड जल्द आ रहा है', 
+    'dash_arrow': 'डैशबोर्ड पर जाओ →',
+    'insurance_title': 'बीमा योजनाएं', 'secure_family': 'अपने परिवार को सुरक्षित करो', 'affordable_plans': 'सस्ती बीमा योजनाएं',
+    'popular': 'लोकप्रिय', 'premium_label': 'प्रीमियम: ', 'per_month': '/महीना', 'insurance_enrollment': 'बीमा नामांकन',
+    'ok_btn': 'ठीक है', 'enroll_now': 'नामांकन करो', 'help_title': 'मदद', 'here_to_help': 'हम आपकी मदद के लिए हैं!',
+    'see_faqs_below': 'नीचे अक्सर पूछे जाने वाले सवाल देखें', 'faqs_title': 'अक्सर पूछे जाने वाले सवाल',
+    'need_direct_help': 'सीधी मदद चाहिए?', 'talk_to_us': 'हमसे बात करो', 'call_support_hindi': 'हिंदी में कॉल सपोर्ट',
+    'call_support_soon': 'कॉल सपोर्ट जल्द शुरू होगा', 'how_to_use_app': 'ऐप कैसे चलाएं?', 'watch_video_tutorial': 'वीडियो ट्यूटोरियल देखें',
+    'video_tutorial_soon': 'वीडियो ट्यूटोरियल जल्द आ रहा है', 'roadmap_title': 'रोडमैप', 'soon_badge': 'जल्द', 'phase': 'Phase',
+    'live_status': 'Live ✅', 'coming_soon_status': 'जल्द आ रहा है 🚧', 'in_planning': 'योजना में 📋', 'future_status': 'भविष्य 🔮',
+    'settings_title': 'सेटिंग्स', 'lang_label': 'भाषा', 'notif_label': 'सूचनाएं', 'data_label': 'डेटा',
+    'employer_dash': 'नियोक्ता डैशबोर्ड', 'workers_label': 'कामगार', 'verified_count': 'सत्यापित', 
+    'pending_count': 'बाकी', 'pending_verifications': 'सत्यापन बाकी', 'all_good': 'सब ठीक है! 🎉', 
+    'no_pending_verifications': 'कोई सत्यापन बाकी नहीं है', 'verified_success': '✅ सत्यापित कर दिया!',
+    'entry_disputed': ' की एंट्री विवादित की गई', 'dispute': 'विवाद', 'coming_soon_text': 'जल्द आ रहा है',
   },
   'English': {
-    // --- Dashboard & General ---
+    // --- English Words ---
     'dashboard': 'Dashboard', 'loans': 'Loans', 'schemes': 'Schemes', 'profile': 'Profile',
     'trust_score': 'Trust Score', 'income': 'Income', 'expense': 'Expense',
     'apply_loan': 'Apply for Loan', 'available_offers': 'Available Offers',
     'recent_transactions': 'Recent Transactions', 'logout': 'Logout',
     'greeting': 'Hello', 'how_earning': 'How was your earning today?', 'no_notif': 'No new notifications right now',
-    'view_details': 'View in detail', 'monthly_income': 'This month\'s earnings', 'view_all': 'View all →',
+    'view_details': 'View in detail', 'monthly_income': "This month's earnings", 'view_all': 'View all →',
     'verified': 'Verified', 'pending': 'Pending', 'quick_actions': 'Quick Actions ⚡',
     'qa_voice': 'Voice\nLog', 'qa_income': 'View\nIncome', 'qa_loan': 'Get\nLoan', 'qa_schemes': 'Govt\nSchemes',
     'recent_entries': 'Recent Entries', 'no_entry': 'No entries yet', 'tap_voice': 'Tap "Voice Log" above',
@@ -95,7 +97,7 @@ const Map<String, Map<String, String>> appTranslations = {
     'voice_title': 'Voice Log', 'listening': 'Listening...', 'saving': 'Saving...',
     'tap_mic': 'Tap mic to speak', 'entry_saved': 'Entry saved! ✅',
     'voice_hint_text': 'Try saying:\n"Got 800 rupees for daily wage"\n"Spent 500 on petrol"',
-    'ledger_title': 'Income Ledger', 'this_month_income': 'This Month\'s Income',
+    'ledger_title': 'Income Ledger', 'this_month_income': "This Month's Income",
     'verified_label': 'Verified', 'pending_label': 'Pending', 'all_transactions': 'All Transactions',
     'credit_profile_title': 'Credit Profile', 'share_soon': 'Score sharing coming soon',
     'to_excellent': 'To "Excellent"', 'points_left': 'points left', 'score_components': 'Score Components',
@@ -105,24 +107,17 @@ const Map<String, Map<String, String>> appTranslations = {
     'govt_schemes': 'Government Schemes', 'tab_all': 'All', 'tab_insurance': 'Insurance', 'tab_pension': 'Pension',
     'tab_health': 'Health', 'tab_identity': 'Identity', 'tab_housing': 'Housing', 'eligible_check': 'Eligible ✓',
     'applied_check': 'Applied ✓', 'go_to_link': 'Go to', 'already_applied': 'Already Applied', 'apply_now': 'Apply Now',
-
-    // --- Loan Screen ---
     'get_loan': 'Get Loan', 'how_much_loan': 'How much loan do you need?', 'why_loan': 'Purpose of Loan?',
     'medical': 'Medical', 'wedding': 'Wedding', 'home': 'Home', 'business': 'Business', 'other': 'Other',
     'active_loan': 'Active Loan', 'eligible_yes': 'You are eligible! ✅', 'eligible_no': 'Not eligible yet',
     'max_limit': 'Max Limit', 'interest_rate_label': 'Interest Rate', 'tenure_label': 'Tenure',
     'months_24': '24 Months', 'no_active_loan': 'No active loans', 'apply_from_above': 'Apply from above!',
-
-    // --- Profile Screen ---
     'profile_title': 'Profile', 'total_earnings': 'Total Earnings', 'fixed_income': 'Fixed Income',
     'employers': 'Employers', 'days': 'Days', 'aadhaar_status': 'Aadhaar Status',
     'verified_yes': 'Verified ✓', 'verified_no': 'Verification Pending', 'do_it': 'Do it →',
     'menu_settings': 'Settings', 'menu_lang': 'Change Language', 'menu_roadmap': 'Roadmap',
     'menu_help': 'Help', 'logout_btn': 'Logout', 'unknown': 'Unknown',
-    'Construction Worker': 'Construction Worker',
-    'Delhi': 'Delhi',
-
-    // --- Auth ---
+    'Construction Worker': 'Construction Worker', 'Delhi': 'Delhi',
     'choose_lang': 'Choose Language', 'choose_lang_sub': 'अपनी भाषा चुनें', 'coming_soon': 'Coming Soon',
     'continue_btn': 'Continue', 'enter_phone': 'Enter Mobile Number', 'will_send_otp': 'We will send you an OTP',
     'val_phone_req': 'Phone number is required', 'val_phone_10': 'Enter a valid 10-digit number',
@@ -143,14 +138,53 @@ const Map<String, Map<String, String>> appTranslations = {
     'wt_shop': 'Shop Worker', 'wt_factory': 'Factory Worker', 'wt_farming': 'Farming', 'wt_other': 'Other',
     'welcome_user': 'Welcome', 'profile_created': 'Your profile has been created',
     'your_trust_score': 'Your Trust Score', 'building_score': '🔨 Building', 'max_score': 'Max 900',
-    'score_tips_title': '💡 Ways to improve score', 
-    'tip_1': 'Log your income daily via voice', 'tip_1_pt': '+50 pts',
-    'tip_2': 'Get verified by your employer', 'tip_2_pt': '+30 pts',
-    'tip_3': 'Link e-Shram Card & Aadhaar', 'tip_3_pt': '+20 pts',
+    'score_tips_title': '💡 Ways to improve score', 'tip_1': 'Log your income daily via voice', 'tip_1_pt': '+50 pts',
+    'tip_2': 'Get verified by your employer', 'tip_2_pt': '+30 pts', 'tip_3': 'Link e-Shram Card & Aadhaar', 'tip_3_pt': '+20 pts',
     'go_to_dashboard': 'Go to Dashboard',
+    'loan_offers_title': 'Loan Offers', 'fetching_ocen': 'Fetching offers from OCEN...', 'please_wait': 'Please wait',
+    'offers_for_you': 'You have', 'offers_count': 'offers!', 'choose_best': 'Choose the best one',
+    'best_offer': 'Best Offer', 'amount': 'Amount', 'interest': 'Interest', 'emi': 'EMI', 'duration': 'Tenure',
+    'months': 'months', 'approval': 'Approval', 'choose_this_offer': 'Select this offer',
+    'loan_approved': 'Loan Approved! 🎉', 'congrats_approved': 'Congratulations! Your loan is approved',
+    'lender': 'Lender', 'when_money_arrive': 'When will I get the money?', 'in_4_hours': 'Within 4 hours',
+    'emi_schedule': 'EMI Schedule', 'month_apr': 'April 2026', 'month_may': 'May 2026', 'month_jun': 'June 2026',
+    'download': 'Download', 'share': 'Share', 'download_soon': 'Download coming soon', 
+    'dash_arrow': 'Go to Dashboard →',
+    'insurance_title': 'Insurance Plans', 'secure_family': 'Secure your family', 'affordable_plans': 'Affordable insurance plans',
+    'popular': 'Popular', 'premium_label': 'Premium: ', 'per_month': '/month', 'insurance_enrollment': 'Insurance Enrollment',
+    'ok_btn': 'OK', 'enroll_now': 'Enroll Now', 'help_title': 'Help', 'here_to_help': 'We are here to help!',
+    'see_faqs_below': 'See frequently asked questions below', 'faqs_title': 'Frequently Asked Questions',
+    'need_direct_help': 'Need direct help?', 'talk_to_us': 'Talk to us', 'call_support_hindi': 'Call Support',
+    'call_support_soon': 'Call support starting soon', 'how_to_use_app': 'How to use the app?', 'watch_video_tutorial': 'Watch video tutorial',
+    'video_tutorial_soon': 'Video tutorial coming soon', 'roadmap_title': 'Roadmap', 'soon_badge': 'Soon', 'phase': 'Phase',
+    'live_status': 'Live ✅', 'coming_soon_status': 'Coming Soon 🚧', 'in_planning': 'In Planning 📋', 'future_status': 'Future 🔮',
+    'settings_title': 'Settings', 'lang_label': 'Language', 'notif_label': 'Notifications', 'data_label': 'Data',
+    'employer_dash': 'Employer Dashboard', 'workers_label': 'Workers', 'verified_count': 'Verified', 
+    'pending_count': 'Pending', 'pending_verifications': 'Pending Verifications', 'all_good': 'All Good! 🎉', 
+    'no_pending_verifications': 'No pending verifications', 'verified_success': '✅ Verified successfully!',
+    'entry_disputed': "'s entry was disputed", 'dispute': 'Dispute', 'coming_soon_text': 'Coming Soon',
   }
 };
 
 String tr(String lang, String key) {
   return appTranslations[lang]?[key] ?? key;
+}
+
+String translateName(String name, String lang) {
+  final hiToEn = {
+    'रमेश कुमार': 'Ramesh Kumar', 'सुरेश': 'Suresh', 'अनीता देवी': 'Anita Devi',
+    'पंकज सिंह': 'Pankaj Singh', 'नेहा': 'Neha', 'ब्रजेश': 'Brajesh',
+    'सुनीता देवी': 'Sunita Devi', 'महेश यादव': 'Mahesh Yadav', 'प्रिया शर्मा': 'Priya Sharma'
+  };
+  final enToHi = {
+    'Ramesh Kumar': 'रमेश कुमार', 'Suresh': 'सुरेश', 'Anita Devi': 'अनीता देवी',
+    'Pankaj Singh': 'पंकज सिंह', 'Neha': 'नेहा', 'Brajesh': 'ब्रजेश',
+    'Sunita Devi': 'सुनीता देवी', 'Mahesh Yadav': 'महेश यादव', 'Priya Sharma': 'प्रिया शर्मा'
+  };
+
+  if (lang == 'English') {
+    return hiToEn[name] ?? name; 
+  } else {
+    return enToHi[name] ?? name;
+  }
 }

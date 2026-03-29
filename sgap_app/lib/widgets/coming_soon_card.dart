@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart'; // Riverpod add kiya
 import 'package:google_fonts/google_fonts.dart';
 import '../core/theme/app_colors.dart';
+import '../core/providers/language_provider.dart'; 
+import '../core/localization/app_translations.dart'; 
 
-class ComingSoonCard extends StatelessWidget {
+// ConsumerWidget banaya
+class ComingSoonCard extends ConsumerWidget {
   final String featureName;
   final String phaseBadgeText;
   final IconData? icon;
@@ -15,38 +19,24 @@ class ComingSoonCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final hindiFont = GoogleFonts.notoSansDevanagari();
+    final lang = ref.watch(languageProvider); // Language watch kar raha hai
 
     return Opacity(
-      opacity: 0.6, // Disabled/greyed-out look
+      opacity: 0.6,
       child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(24),
+        width: double.infinity, padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: AppColors.darkBackground, // Even darker than card
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: AppColors.darkBorder.withValues(alpha: 0.5),
-            width: 1.0,
-          ),
+          color: AppColors.darkBackground, borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.darkBorder.withValues(alpha: 0.5), width: 1.0),
         ),
         child: Column(
           children: [
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: AppColors.darkBorder,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                phaseBadgeText,
-                style: const TextStyle(
-                  color: AppColors.darkTextSecondary,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              decoration: BoxDecoration(color: AppColors.darkBorder, borderRadius: BorderRadius.circular(12)),
+              child: Text(phaseBadgeText, style: const TextStyle(color: AppColors.darkTextSecondary, fontSize: 12, fontWeight: FontWeight.bold)),
             ),
             const SizedBox(height: 16),
             if (icon != null) ...[
@@ -55,26 +45,16 @@ class ComingSoonCard extends StatelessWidget {
             ],
             Text(
               featureName,
-              style: hindiFont.copyWith(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
+              style: hindiFont.copyWith(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
+              decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
               child: Text(
-                'जल्द आ रहा है', // Coming Soon
-                style: hindiFont.copyWith(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w600,
-                ),
+                tr(lang, 'coming_soon_text'), // Naya Translated Text
+                style: hindiFont.copyWith(color: AppColors.primary, fontWeight: FontWeight.w600),
               ),
             ),
           ],
