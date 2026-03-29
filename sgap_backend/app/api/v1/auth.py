@@ -58,14 +58,19 @@ def send_otp(request: SendOtpRequest, db: Session = Depends(get_db)):
     if not validate_indian_phone(phone):
         raise HTTPException(status_code=400, detail="Invalid phone number")
 
-    otp = "123456" if settings.DEMO_MODE else str(random.randint(100000, 999999))
+    # 1. ALWAYS generate a real random 6-digit OTP (ignoring DEMO_MODE override)
+    otp = str(random.randint(100000, 999999))
+    
+    # 2. Save it in memory
     otp_store[phone] = otp
-    print(f"🔔 DEV MODE: The OTP for {phone} is {otp}")
-    logger.info("OTP generated for %s", phone[:4] + "****")
+    logger.info(f"OTP generated for {phone[:4]}****")
 
-    response = {"message": "OTP sent successfully", "phone": phone}
-    if settings.DEMO_MODE:
-        response["demo_otp"] = otp
+    # 3. Return it directly to the frontend so it flashes on the screen
+    response = {
+        "message": "OTP sent successfully",
+        "phone": phone,
+        "demo_otp": otp  # <-- This key triggers the Flutter popup!
+    }
     return response
 
 @router.post("/verify-otp")
