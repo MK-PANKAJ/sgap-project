@@ -4,7 +4,7 @@ import 'api_interceptor.dart';
 /// Base URL for the S-GAP backend.
 /// 10.0.2.2 maps to the host machine's localhost when running in
 /// the Android emulator.
-const String _kBaseUrl = 'https://sgap-project.onrender.com/api/v1';
+const String _kBaseUrl = 'https://sgap-project.onrender.com/api/v1/';
 
 /// Centralized Dio-based HTTP client (singleton).
 ///

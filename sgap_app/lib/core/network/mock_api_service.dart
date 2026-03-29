@@ -1,8 +1,8 @@
 import 'api_client.dart';
 
 /// ┌──────────────────────────────────────────────────────────────┐
-/// │  MOCK MODE SWITCH                                           │
-/// │  Set to `false` when the real backend is ready.             │
+/// │  MOCK MODE SWITCH                                            │
+/// │  Set to `false` when the real backend is ready.              │
 /// └──────────────────────────────────────────────────────────────┘
 // ignore: constant_identifier_names
 const bool USE_MOCK = false;
@@ -32,7 +32,7 @@ class MockApiService {
         'demo_otp': '123456',
       };
     }
-    final res = await _api.post('/auth/send-otp', data: {'phone': phone});
+    final res = await _api.post('auth/send-otp', data: {'phone': phone});
     return res.data as Map<String, dynamic>;
   }
 
@@ -50,7 +50,7 @@ class MockApiService {
       };
     }
     final res = await _api.post(
-      '/auth/verify-otp',
+      'auth/verify-otp',
       data: {'phone': phone, 'otp': otp},
     );
     return res.data as Map<String, dynamic>;
@@ -73,7 +73,7 @@ class MockApiService {
         'created_at': DateTime.now().toIso8601String(),
       };
     }
-    final res = await _api.post('/workers/register', data: data);
+    final res = await _api.post('workers/register', data: data);
     return res.data as Map<String, dynamic>;
   }
 
@@ -87,7 +87,7 @@ class MockApiService {
       await _mockDelay();
       return _mockWorkerProfile();
     }
-    final res = await _api.get('/workers/me');
+    final res = await _api.get('workers/me');
     return res.data as Map<String, dynamic>;
   }
 
@@ -110,7 +110,7 @@ class MockApiService {
         'comparison_last_month': '+12%',
       };
     }
-    final res = await _api.get('/income/monthly-summary/$workerId');
+    final res = await _api.get('income/monthly-summary/$workerId');
     return res.data as Map<String, dynamic>;
   }
 
@@ -134,7 +134,7 @@ class MockApiService {
     }
     // Real implementation would use multipart/form-data
     final res = await _api.post(
-      '/income/voice-process',
+      'income/voice-process',
       data: {'audio_path': audioPath, 'language': lang},
     );
     return res.data as Map<String, dynamic>;
@@ -156,7 +156,7 @@ class MockApiService {
         'created_at': DateTime.now().toIso8601String(),
       };
     }
-    final res = await _api.post('/income/confirm', data: data);
+    final res = await _api.post('income/confirm', data: data);
     return res.data as Map<String, dynamic>;
   }
 
@@ -170,7 +170,7 @@ class MockApiService {
         'page': 1,
       };
     }
-    final res = await _api.get('/income/worker/$workerId');
+    final res = await _api.get('income/worker/$workerId');
     return res.data as Map<String, dynamic>;
   }
 
@@ -203,7 +203,7 @@ class MockApiService {
         'trend': 'improving',
       };
     }
-    final res = await _api.get('/trust-score/$workerId');
+    final res = await _api.get('trust-score/$workerId');
     return res.data as Map<String, dynamic>;
   }
 
@@ -225,7 +225,7 @@ class MockApiService {
         'documents_required': ['Aadhaar', 'PAN (optional)', 'Bank Statement'],
       };
     }
-    final res = await _api.get('/loans/check-eligibility/$workerId');
+    final res = await _api.get('loans/check-eligibility/$workerId');
     return res.data as Map<String, dynamic>;
   }
 
@@ -276,7 +276,7 @@ class MockApiService {
         ],
       };
     }
-    final res = await _api.post('/loans/apply', data: data);
+    final res = await _api.post('loans/apply', data: data);
     return res.data as Map<String, dynamic>;
   }
 
@@ -357,7 +357,7 @@ class MockApiService {
         ],
       };
     }
-    final res = await _api.get('/schemes');
+    final res = await _api.get('schemes');
     return res.data as Map<String, dynamic>;
   }
 
@@ -416,7 +416,7 @@ class MockApiService {
         ],
       };
     }
-    final res = await _api.get('/insurance/plans');
+    final res = await _api.get('insurance/plans');
     return res.data as Map<String, dynamic>;
   }
 
