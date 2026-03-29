@@ -191,7 +191,7 @@ class CreditScoringModel:
         """
         self._ensure_model()
 
-        X = np.array([[features.get(f, 0) for f in self.FEATURE_NAMES]])
+        X = pd.DataFrame([[features.get(f, 0) for f in self.FEATURE_NAMES]], columns=self.FEATURE_NAMES)
         raw_score = self.model.predict(self.scaler.transform(X))[0]
         score = int(np.clip(raw_score, 300, 1000))
 

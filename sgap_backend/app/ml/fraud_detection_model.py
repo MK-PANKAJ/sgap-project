@@ -159,7 +159,7 @@ class FraudDetectionModel:
         """
         self._ensure_model()
 
-        X = np.array([[features.get(f, 0) for f in self.FEATURE_NAMES]])
+        X = pd.DataFrame([[features.get(f, 0) for f in self.FEATURE_NAMES]], columns=self.FEATURE_NAMES)
         X_scaled = self.scaler.transform(X)
 
         # Isolation Forest: -1 = anomaly, 1 = normal

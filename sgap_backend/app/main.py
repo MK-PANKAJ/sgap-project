@@ -49,8 +49,29 @@ app.include_router(future_router, prefix="/api/v1/future", tags=["Future"])
 
 @app.on_event("startup")
 def on_startup():
-    """Create all database tables on first run."""
     init_db()
+    # Auto-seed if DB is empty
+    try:
+        from app.database import SessionLocal
+        from app.models.user import User
+        db = SessionLocal()
+        if db.query(User).count() == 0:
+            print("📦 Empty DB — running seed...")
+            import subprocess, sys
+            subprocess.run([sys.executable, "seed_data.py"], check=True)
+            print("✅ Seed complete")
+        db.close()
+    except Exception as e:
+        print(f"⚠️ Auto-seed failed: {e}")
+    # Pre-warm ML models
+    try:
+        from app.ml.credit_scoring_model import credit_model
+        from app.ml.fraud_detection_model import fraud_model
+        credit_model._ensure_model()
+        fraud_model._ensure_model()
+        print("✅ ML models ready")
+    except Exception as e:
+        print(f"⚠️ ML warm-up failed: {e}")
 
 
 @app.get("/")
