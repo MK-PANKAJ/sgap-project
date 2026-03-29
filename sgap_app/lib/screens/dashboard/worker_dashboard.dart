@@ -44,13 +44,19 @@ class _WorkerDashboardState extends ConsumerState<WorkerDashboard> with TickerPr
   }
 
   Future<void> _loadData() async {
+    // 1. Storage se profile fetch kiya
     final profile = await SecureStorage.instance.getWorkerProfile();
     _userName = profile?['name'] as String? ?? 'दोस्त';
 
+    // 👇 2. YAHAN HARDCODED 'worker-001' HATA DIYA HAI 👇
+    // SecureStorage profile se real database UUID nikal rahe hain.
+    final String workerId = profile?['id']?.toString() ?? profile?['user_id']?.toString() ?? '';
+
+    // 3. Real ID pass kar ke live backend APIs call kiye
     final results = await Future.wait([
-      MockApiService.instance.getTrustScore('worker-001'),
-      MockApiService.instance.getMonthlyIncome('worker-001'),
-      MockApiService.instance.getIncomeRecords('worker-001'),
+      MockApiService.instance.getTrustScore(workerId),
+      MockApiService.instance.getMonthlyIncome(workerId),
+      MockApiService.instance.getIncomeRecords(workerId),
     ]);
 
     if (!mounted) return;
@@ -425,7 +431,6 @@ class _WorkerDashboardState extends ConsumerState<WorkerDashboard> with TickerPr
   }
 }
 
-// BAQI HELPER CLASSES SAME RAHENGI (Neeche wale copy paste mein bas language update kiya hai)
 class _NotificationBell extends StatefulWidget {
   final VoidCallback onTap;
   const _NotificationBell({required this.onTap});
